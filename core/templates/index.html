@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django SSE Demo</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+</head>
+<body>
+    <h1>Django SSE Demo</h1>
+    <div id="sse"></div>
+
+    <div id="toasts" class="toast toast-top toast-end">
+
+    </div>
+
+    <script>
+        let sseEl = document.getElementById("sse")
+        let toastsEl = document.getElementById("toasts")
+        let eventSource = new EventSource('/events/sse')
+        console.log(eventSource)
+        eventSource.onmessage =  (e) => {
+            data = JSON.parse(e.data)
+
+            if (data.type === 'info') {
+                toast = `<div class="alert alert-info">
+                                            <span>${data.message}</span>
+                                        </div>`
+
+                //toastsEl.insertAdjacentHTML('beforebegin', toast)
+                toastsEl.insertAdjacentHTML('afterbegin', toast);
+            }
+
+            if (data.type === 'success') {
+                toast = `<div class="alert alert-success">
+                                            <span>${data.message}</span>
+                                        </div>`
+
+                //toastsEl.insertAdjacentHTML('beforebegin', toast)
+                toastsEl.insertAdjacentHTML('afterbegin', toast);
+            }
+
+            setTimeout(() => {
+                // Get the last child element
+                const lastChild = toastsEl.lastChild;
+
+                // Remove the last child element
+                toastsEl.removeChild(lastChild);
+            }, 3000)
+
+        }  
+        
+
+    </script>
+</body>
+</html>
